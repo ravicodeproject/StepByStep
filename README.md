@@ -2,7 +2,7 @@
 
 Install EntityFramework with the following command of "Package Manager Console"
 
-install-package EntityFramework
+CMD: install-package EntityFramework
 
 <?xml version="1.0" encoding="utf-8"?>
 <packages>
