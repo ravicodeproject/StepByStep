@@ -9,6 +9,7 @@ insert into Employees values(2,'siva',20000)
 insert into Employees values(3,'sreelakshmi',80000)
 insert into Employees values(4,'hyma',15000)
 insert into Employees values(5,'lakshmi',12000)
-go  
-
+insert into Employees values(6,'padma',12000)
+insert into Employees values(7,'abc',12000)
+go
 select * from Employees
