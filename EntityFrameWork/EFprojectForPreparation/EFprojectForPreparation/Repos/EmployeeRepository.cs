@@ -2,9 +2,8 @@
 using EFprojectForPreparation.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace EFprojectForPreparation.Repos
@@ -18,7 +17,7 @@ namespace EFprojectForPreparation.Repos
         {
             _context = new DataContext();
         }
-
+        #region QueryOperations
         public void ListOfEmployees()
         {
             /*
@@ -528,5 +527,156 @@ namespace EFprojectForPreparation.Repos
             Console.ReadKey();
 
         }
+        #endregion
+        #region NonQueryOperations
+        /* We can insert new rows into the table using EF. */
+        public void InsertNewRow()
+        {
+            Console.WriteLine("EmpID");
+            int empid = Convert.ToInt32(Console.ReadLine());
+
+            Console.WriteLine("EmpName");
+            string empname = Console.ReadLine();
+
+            Console.WriteLine("Salary");
+            decimal salary = Convert.ToDecimal(Console.ReadLine());
+
+            Console.WriteLine("DeptNo");
+            int deptno = Convert.ToInt32(Console.ReadLine());
+
+            Employee e = new Employee();
+            e.EmpID = empid;
+            e.EmpName = empname;
+            e.Salary = salary;
+            e.DeptNo = deptno;
+
+            /*The Add() method just adds the new model object to existing virtual table.*/
+            _context.Employees.Add(e);
+
+            /*The SaveChanges() method automatically generates INSERT sql statement and executes the same at database.*/
+            _context.SaveChanges();
+
+            Console.WriteLine("Inserted.");
+            Console.ReadKey();
+        }
+
+        /* We can update the existing rows of the table using EF. */
+        public void UpdateExistingRow()
+        {
+            Console.WriteLine("EmpID");
+            int empid = Convert.ToInt32(Console.ReadLine());
+
+            /*The FirstOrDefault() gets existing row of the table.*/
+            Employee e = _context.Employees.Where(temp => temp.EmpID == empid).FirstOrDefault();
+
+            Console.WriteLine("EmpName to update");
+            string empname = Console.ReadLine();
+
+            Console.WriteLine("Salary to update");
+            decimal salary = Convert.ToDecimal(Console.ReadLine());
+
+            if (e != null)
+            {
+                e.EmpName = empname;
+                e.Salary = salary;
+
+                /*
+                The SaveChanges() method automatically generates UPDATE and executes the same at database.
+                Save all changes made in this Context to the underlying database.
+
+                Returns:
+                int type
+
+                Exceptions:
+                System.Data.Entity.Infrastructure.DbUpdateException
+                System.Data.Entity.Infrastructure.DbUpdateConcurrencyException
+                System.Data.Entity.Validation.DbEntityValidationException
+                NotSupportedException
+                ObjectDisposedException
+                InvalidOperationException
+                */
+                _context.SaveChanges();
+
+                Console.WriteLine("Updated");
+            }
+            else
+            {
+                Console.WriteLine("Invalid EmpID");
+            }
+
+            Console.ReadKey();
+        }
+
+        /* We can update the existing rows of the table using EF. */
+        public void DeleteExistingRow()
+        {
+            Console.WriteLine("EmpID To Delete");
+            int empid = Convert.ToInt32(Console.ReadLine());
+
+            /*The FirstOrDefault() gets existing row of the table.*/
+            Employee e = _context.Employees.Where(temp => temp.EmpID == empid).FirstOrDefault();
+
+            if (e != null)
+            {
+                /*Returns Deleted Employee*/
+                int eid= _context.Employees.Remove(e).EmpID;
+
+                /*
+                The SaveChanges() method automatically generates DELETE statement and executes the same at database.
+                Save all changes made in this Context to the underlying database.
+
+                Returns:
+                int type
+
+                Exceptions:
+                System.Data.Entity.Infrastructure.DbUpdateException
+                System.Data.Entity.Infrastructure.DbUpdateConcurrencyException
+                System.Data.Entity.Validation.DbEntityValidationException
+                NotSupportedException
+                ObjectDisposedException
+                InvalidOperationException
+                */
+                _context.SaveChanges();
+
+                Console.WriteLine("EmpID {0} Deleted",eid);
+            }
+            else
+            {
+                Console.WriteLine("Invalid EmpID");
+            }
+
+            Console.ReadKey();
+        }
+        #endregion
+        #region storedprocedures
+        public void StoredProcedure()
+        {
+            /*
+             create procedure GetEmployees
+             as 
+             begin
+                select * from Employees
+             end
+             */
+            emps = _context.Database.SqlQuery<Employee>("GetEmployees").ToList();
+            ShowResult();
+        }
+
+        public void StoredProcedureWithParams()
+        {
+            /*
+             create procedure SP_SearchEmployees(@str nvarchar(max))
+             as 
+             begin
+                select * from Employees where EmpName like '%' + @str + '%'
+             end
+             */
+            Console.WriteLine("Enter Employee Name for Search.");
+            string ename = Console.ReadLine();
+            SqlParameter p1 = new SqlParameter("@str",ename);
+            emps = _context.Database.SqlQuery<Employee>("SP_SearchEmployees @str", p1).ToList();
+            ShowResult();
+        }
+        #endregion
     }
 }

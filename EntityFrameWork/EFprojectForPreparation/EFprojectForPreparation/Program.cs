@@ -33,7 +33,15 @@ namespace EFprojectForPreparation
             // ER.SelectsFirstRowOrDefault();
             // ER.SelectsLastRow();
             // ER.SelectsLastRowOrDefault();
-             ER.AggregateMethods();
+            // ER.AggregateMethods();
+
+            // ER.InsertNewRow();
+            // ER.UpdateExistingRow();
+            // ER.DeleteExistingRow();
+
+            //ER.StoredProcedure();
+            ER.StoredProcedureWithParams();
+
 
             // var DR = new DepartmentRepository();
             // DR.JoinTwoTables();
